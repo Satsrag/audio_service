@@ -567,6 +567,20 @@ static NSMutableDictionary *nowPlayingInfo = nil;
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [plugins removeObject:self];
+    if (plugins.count == 0) {
+        [commandCenter.changePlaybackRateCommand setEnabled:NO];
+        [commandCenter.togglePlayPauseCommand setEnabled:NO];
+        [commandCenter.togglePlayPauseCommand removeTarget:nil];
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+        processingState = ApsIdle;
+        actionBits = 0;
+        [self updateControls];
+        _controlsUpdated = NO;
+        startResult = nil;
+        commandCenter = nil;
+        handlerChannel = nil;
+    }
 }
 
 @end
